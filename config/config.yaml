@@ -1,0 +1,371 @@
+application:
+  name: "Demographic Analysis System"
+  version: "1.0.0"
+  environment: "development"
+  debug: true
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  reload: true
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8000"
+  rate_limit:
+    enabled: true
+    per_minute: 60
+    burst: 10
+
+database:
+  postgres:
+    host: "localhost"
+    port: 5432
+    database: "demographics"
+    user: "postgres"
+    password: "postgres"
+    pool_size: 20
+    max_overflow: 10
+    echo: false
+  
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: ""
+    decode_responses: true
+    socket_timeout: 5
+    socket_connect_timeout: 5
+  
+  vector_search:
+    index_type: "IVFFlat"
+    nlist: 100
+    nprobe: 10
+    embedding_dim: 512
+
+models:
+  device: "cuda"
+  batch_size: 8
+  num_workers: 4
+  enable_mixed_precision: true
+  
+  face_detection:
+    type: "yolov8"
+    model_path: "models/yolov8n-face.pt"
+    confidence_threshold: 0.5
+    iou_threshold: 0.45
+    min_face_size: 30
+    max_faces_per_frame: 20
+    input_size: [640, 640]
+  
+  age_estimation:
+    ensemble:
+      enabled: true
+      models:
+        - name: "dex"
+          weight: 0.4
+          model_path: "models/dex_imdb_wiki.pth"
+        - name: "ssrnet"
+          weight: 0.3
+          model_path: "models/ssrnet_3_3_3_64_1.0_1.0.pth"
+        - name: "vit"
+          weight: 0.3
+          model_path: "models/age_vit_base.pth"
+    
+    temporal_smoothing:
+      enabled: true
+      window_size: 5
+      method: "exponential"
+      alpha: 0.3
+    
+    range: [0, 100]
+    mae_target: 4.0
+  
+  gender_classification:
+    model: "fairface"
+    model_path: "models/fairface_gender.pth"
+    confidence_threshold: 0.7
+    classes: ["male", "female"]
+    accuracy_target: 0.98
+  
+  emotion_recognition:
+    model: "affectnet"
+    model_path: "models/affectnet_8.pth"
+    confidence_threshold: 0.6
+    classes: 
+      - "neutral"
+      - "happy"
+      - "sad"
+      - "surprise"
+      - "fear"
+      - "disgust"
+      - "anger"
+      - "contempt"
+    accuracy_target: 0.85
+  
+  ethnicity_estimation:
+    model: "fairface"
+    model_path: "models/fairface_ethnicity.pth"
+    confidence_threshold: 0.5
+    classes:
+      - "White"
+      - "Black"
+      - "Latino_Hispanic"
+      - "East Asian"
+      - "Southeast Asian"
+      - "Indian"
+      - "Middle Eastern"
+    ethical_disclaimer: true
+    show_confidence: true
+  
+  facial_landmarks:
+    model: "mediapipe"
+    num_landmarks: 468
+    static_image_mode: false
+    max_num_faces: 20
+    refine_landmarks: true
+    min_detection_confidence: 0.5
+    min_tracking_confidence: 0.5
+  
+  face_attributes:
+    glasses_detection:
+      enabled: true
+      model_path: "models/glasses_detector.pth"
+    
+    facial_hair:
+      enabled: true
+      model_path: "models/facial_hair_detector.pth"
+    
+    accessories:
+      enabled: true
+      classes: ["glasses", "sunglasses", "hat", "earrings", "mask"]
+  
+  face_embeddings:
+    model: "arcface"
+    model_path: "models/arcface_resnet100.pth"
+    embedding_dim: 512
+    normalize: true
+    tta: false
+
+tracking:
+  enabled: true
+  algorithm: "deepsort"
+  max_age: 30
+  min_hits: 3
+  iou_threshold: 0.3
+  max_distance: 0.6
+  nn_budget: 100
+  
+  reid:
+    enabled: true
+    similarity_threshold: 0.6
+    search_top_k: 5
+
+quality_assessment:
+  enabled: true
+  
+  blur_detection:
+    method: "laplacian"
+    threshold: 100
+    min_quality: 0.5
+  
+  occlusion_detection:
+    enabled: true
+    threshold: 0.3
+  
+  pose_estimation:
+    enabled: true
+    max_yaw: 45
+    max_pitch: 30
+    max_roll: 30
+  
+  illumination:
+    enabled: true
+    min_brightness: 50
+    max_brightness: 200
+    check_histogram: true
+
+performance:
+  target_fps: 30
+  max_latency_ms: 100
+  
+  optimization:
+    enable_tensorrt: false
+    enable_onnx: true
+    enable_quantization: false
+    batch_inference: true
+  
+  caching:
+    enabled: true
+    embeddings_ttl: 3600
+    predictions_ttl: 300
+  
+  threading:
+    num_threads: 4
+    use_multiprocessing: false
+
+ethics:
+  consent:
+    required: true
+    timeout_seconds: 30
+    display_message: "This system will analyze facial attributes. Do you consent?"
+  
+  bias_detection:
+    enabled: true
+    monitor_metrics: true
+    alert_threshold: 0.1
+    fairness_metrics:
+      - "demographic_parity"
+      - "equalized_odds"
+      - "equal_opportunity"
+  
+  privacy:
+    anonymize_data: true
+    enable_deletion: true
+    data_retention_days: 90
+    gdpr_compliant: true
+    ccpa_compliant: true
+  
+  audit:
+    enabled: true
+    log_predictions: true
+    log_data_access: true
+    log_user_actions: true
+  
+  transparency:
+    show_confidence_scores: true
+    show_model_info: true
+    show_limitations: true
+    disclaimer_message: |
+      This system provides probabilistic predictions that may contain errors.
+      Age, gender, and ethnicity estimates should be treated as approximations.
+      Do not use for high-stakes decisions without human review.
+
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  
+  sentry:
+    enabled: false
+    dsn: ""
+    traces_sample_rate: 0.1
+  
+  logging:
+    level: "INFO"
+    format: "json"
+    directory: "logs"
+    rotation: "1 day"
+    retention: "30 days"
+    
+  metrics:
+    fps: true
+    latency: true
+    accuracy: true
+    memory: true
+    gpu_utilization: true
+
+storage:
+  uploads:
+    directory: "data/uploads"
+    max_size_mb: 50
+    allowed_extensions: [".jpg", ".jpeg", ".png", ".mp4", ".avi"]
+  
+  models:
+    directory: "models"
+    auto_download: true
+  
+  cache:
+    directory: "cache"
+    max_size_gb: 10
+  
+  logs:
+    directory: "logs"
+    
+streaming:
+  fps: 30
+  quality: 85
+  max_duration_seconds: 3600
+  buffer_size: 10
+  websocket_port: 8001
+
+evaluation:
+  datasets:
+    utkface:
+      path: "data/datasets/utkface"
+      enabled: false
+    
+    fairface:
+      path: "data/datasets/fairface"
+      enabled: false
+    
+    affectnet:
+      path: "data/datasets/affectnet"
+      enabled: false
+    
+    imdb_wiki:
+      path: "data/datasets/imdb_wiki"
+      enabled: false
+  
+  metrics:
+    age:
+      - "mae"
+      - "rmse"
+      - "cs_5"
+      - "cs_10"
+    
+    gender:
+      - "accuracy"
+      - "precision"
+      - "recall"
+      - "f1"
+    
+    emotion:
+      - "accuracy"
+      - "balanced_accuracy"
+      - "macro_f1"
+    
+    overall:
+      - "fps"
+      - "latency"
+      - "memory_usage"
+
+training:
+  enabled: false
+  
+  age:
+    epochs: 100
+    batch_size: 64
+    learning_rate: 0.001
+    optimizer: "adamw"
+    scheduler: "cosine"
+    
+  gender:
+    epochs: 50
+    batch_size: 128
+    learning_rate: 0.001
+    
+  emotion:
+    epochs: 80
+    batch_size: 64
+    learning_rate: 0.0001
+
+advanced:
+  active_learning:
+    enabled: false
+    uncertainty_threshold: 0.3
+    sampling_strategy: "least_confident"
+  
+  explainability:
+    enabled: false
+    methods: ["gradcam", "shap"]
+  
+  synthetic_data:
+    enabled: false
+    augmentation_factor: 2
+  
+  federated_learning:
+    enabled: false
+  
+  face_3d_reconstruction:
+    enabled: false
