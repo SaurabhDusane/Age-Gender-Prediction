@@ -2,7 +2,7 @@
 
 A production-grade real-time demographic analysis system achieving SOTA performance with comprehensive facial attribute detection, tracking, and analytics.
 
-## 🎯 Key Features
+## Key Features
 
 ### Core Capabilities
 - **Multi-Face Detection & Tracking**: YOLOv8/RetinaFace with real-time performance (30+ FPS)
@@ -32,7 +32,7 @@ A production-grade real-time demographic analysis system achieving SOTA performa
 - **Deployment**: Docker with GPU support
 - **Optimization**: TensorRT, ONNX Runtime
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -100,7 +100,7 @@ A production-grade real-time demographic analysis system achieving SOTA performa
          └────────────────────────┘
 ```
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 - Python 3.11+
@@ -146,7 +146,7 @@ docker-compose up --build
 # - API Docs: http://localhost:8000/docs
 ```
 
-## 🚀 Usage
+## Usage
 
 ### Python API
 
@@ -198,7 +198,7 @@ Open `http://localhost:3000` for the real-time monitoring dashboard featuring:
 - Face gallery and search
 - Analytics and reporting
 
-## 📊 Model Performance
+## Model Performance
 
 | Model Component | Metric | Target | Achieved |
 |----------------|--------|---------|----------|
@@ -209,7 +209,7 @@ Open `http://localhost:3000` for the real-time monitoring dashboard featuring:
 | Overall Pipeline | FPS (1080p) | 30+ | 35 |
 | Multi-face (10) | Latency | < 100ms | 85ms |
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Face Records
 ```sql
@@ -231,7 +231,7 @@ CREATE TABLE faces (
 CREATE INDEX ON faces USING ivfflat (embedding vector_cosine_ops);
 ```
 
-## ⚖️ Ethical Considerations
+## Ethical Considerations
 
 This system implements responsible AI practices:
 
@@ -250,7 +250,7 @@ This system implements responsible AI practices:
 - Review bias metrics regularly
 - Provide opt-out mechanisms
 
-## 🧪 Testing & Evaluation
+## Testing & Evaluation
 
 ```bash
 # Run unit tests
@@ -267,7 +267,7 @@ python scripts/evaluate.py --dataset fairface
 python scripts/analyze_bias.py --output reports/bias_analysis.html
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [API Documentation](docs/api.md)
 - [Architecture Guide](docs/architecture.md)
@@ -276,7 +276,7 @@ python scripts/analyze_bias.py --output reports/bias_analysis.html
 - [Ethical Guidelines](docs/ethics.md)
 - [Performance Optimization](docs/optimization.md)
 
-## 🔧 Configuration
+## Configuration
 
 Edit `config/config.yaml`:
 
@@ -305,7 +305,7 @@ ethics:
   data_retention_days: 90
 ```
 
-## 📈 Benchmarks
+## Benchmarks
 
 Performance on standard datasets:
 - **UTKFace**: MAE 3.6 years (age), 98.7% (gender)
@@ -313,15 +313,7 @@ Performance on standard datasets:
 - **AffectNet**: 87.3% emotion recognition
 - **LFW**: 99.2% face verification
 
-## 🤝 Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
-## ⚠️ Disclaimer
+## Disclaimer
 
 This system makes probabilistic predictions that may contain errors. Age, gender, and especially ethnicity predictions should be treated as estimates with inherent uncertainty. Always:
 - Display confidence scores
@@ -329,7 +321,7 @@ This system makes probabilistic predictions that may contain errors. Age, gender
 - Avoid high-stakes decisions based solely on predictions
 - Consider ethical implications of deployment
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built upon excellent open-source projects:
 - YOLOv8 (Ultralytics)
@@ -337,7 +329,3 @@ Built upon excellent open-source projects:
 - MediaPipe
 - FairFace
 - PyTorch
-
-## 📧 Contact
-
-For questions or support, please open an issue or contact [your-email@domain.com]
